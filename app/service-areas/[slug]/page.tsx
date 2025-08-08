@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ArrowRight, MapPin, Star, Phone, Clock, Award, Building2, TrendingUp, Users, Search } from 'lucide-react'
-import { searchBusinesses, getArticlesByCategory, businesses, articles } from '@/lib/data'
+import { searchBusinesses, businesses, articles } from '@/lib/data'
 import { formatPhoneNumber, CITY_TO_STATE_MAP } from '@/lib/utils'
 
 interface ServiceAreaPageProps {

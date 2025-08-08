@@ -64,18 +64,29 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ]
 
     // Add service pages for each business
-    const servicePages = business.services.map(service => ({
-      url: `${baseUrl}/businesses/${business.slug}/services/${service.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    }))
+    const servicePages = business.services.map(service => {
+      const serviceSlug = service.toLowerCase()
+        .replace(/&/g, 'and')  // Replace & with 'and'
+        .replace(/\s+/g, '-')  // Replace spaces with hyphens
+        .replace(/[^a-z0-9-]/g, '')  // Remove all non-alphanumeric except hyphens
+      
+      return {
+        url: `${baseUrl}/businesses/${business.slug}/services/${serviceSlug}`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.7,
+      }
+    })
 
     // Add service + location pages (limit to first 50 to avoid too many URLs)
     const serviceLocationPages = business.services.slice(0, 5).flatMap(service => 
       business.serviceAreas.slice(0, 10)
         .map(area => {
-          const serviceSlug = service.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+          const serviceSlug = service.toLowerCase()
+            .replace(/&/g, 'and')  // Replace & with 'and'
+            .replace(/\s+/g, '-')  // Replace spaces with hyphens
+            .replace(/[^a-z0-9-]/g, '')  // Remove all non-alphanumeric except hyphens
+            
           const stateAbbr = getStateAbbreviation(area)
           if (!stateAbbr) return null // Skip if no state found
           

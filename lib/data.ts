@@ -159,7 +159,10 @@ export const businesses: Business[] = [
 
 // Generate 25 articles per service for Lesser Media (675 total articles)
 const generateArticlesForService = (service: string, serviceIndex: number): Article[] => {
-  const serviceSlug = service.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, '')
+  const serviceSlug = service.toLowerCase()
+    .replace(/&/g, 'and')  // Replace & with 'and'
+    .replace(/\s+/g, '-')  // Replace spaces with hyphens
+    .replace(/[()]/g, '')  // Remove parentheses
   const baseDate = new Date('2024-01-01')
   const articles: Article[] = []
   
@@ -179,7 +182,7 @@ const generateArticlesForService = (service: string, serviceIndex: number): Arti
     articles.push({
       id: `${serviceSlug}-${i + 1}`,
       title: `${service} ${template}: Complete Guide for 2024`,
-      slug: `${serviceSlug}-${template.toLowerCase().replace(/\s+/g, '-')}-guide`,
+      slug: `${serviceSlug}-${template.toLowerCase().replace(/&/g, 'and').replace(/\s+/g, '-')}-guide`,
       excerpt: `Discover the ${template.toLowerCase()} for ${service.toLowerCase()}. Learn proven strategies, avoid common mistakes, and maximize your ROI with expert insights from Lesser Media.`,
       content: `# ${service} ${template}: Complete Guide for 2024
 

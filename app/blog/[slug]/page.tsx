@@ -1,289 +1,222 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { Calendar, Clock, User, Share2, BookmarkPlus, TrendingUp, ArrowLeft } from 'lucide-react'
-import Link from "next/link"
-import Image from "next/image"
-import { MobileNav } from "@/components/mobile-nav"
+import { notFound } from 'next/navigation'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { ArrowLeft, ArrowRight, Eye, Calendar, Clock, User, ExternalLink } from 'lucide-react'
+import { allArticles } from '@/lib/data'
 
-// This would typically come from a CMS or database
-const article = {
-  title: "The Complete Guide to White Hat Link Building in 2025",
-  excerpt: "Discover the most effective white hat link building strategies that actually work in 2025. Learn how to build high-quality backlinks that boost your rankings without risking penalties.",
-  content: `
-    <h2>Introduction to White Hat Link Building</h2>
-    <p>Link building remains one of the most crucial aspects of SEO in 2025. However, the landscape has evolved significantly, and what worked five years ago might not only be ineffective today but could actually harm your rankings.</p>
-    
-    <p>In this comprehensive guide, we'll explore the most effective white hat link building strategies that not only comply with Google's guidelines but actually deliver measurable results for your business.</p>
-    
-    <h2>Why White Hat Link Building Matters More Than Ever</h2>
-    <p>Google's algorithms have become increasingly sophisticated at detecting manipulative link building practices. The days of buying bulk backlinks or participating in link schemes are long gone. Today's successful SEO strategies focus on:</p>
-    
-    <ul>
-      <li>Building genuine relationships with other websites</li>
-      <li>Creating valuable content that naturally attracts links</li>
-      <li>Earning links through expertise and authority</li>
-      <li>Focusing on relevance and context over quantity</li>
-    </ul>
-    
-    <h2>The Top 10 White Hat Link Building Strategies for 2025</h2>
-    
-    <h3>1. Resource Page Link Building</h3>
-    <p>Resource pages are goldmines for white hat link building. These pages exist specifically to link out to valuable resources in a particular niche. Here's how to leverage them:</p>
-    
-    <ul>
-      <li>Use search operators like "keyword + resources" or "keyword + useful links"</li>
-      <li>Create genuinely valuable resources that deserve to be listed</li>
-      <li>Reach out with personalized, value-focused emails</li>
-    </ul>
-    
-    <h3>2. Broken Link Building</h3>
-    <p>This strategy involves finding broken links on relevant websites and suggesting your content as a replacement. It's a win-win: you get a link, and the website owner fixes a user experience issue.</p>
-    
-    <h3>3. Guest Posting (Done Right)</h3>
-    <p>Guest posting isn't dead, but it needs to be done strategically. Focus on:</p>
-    <ul>
-      <li>High-quality, relevant websites in your niche</li>
-      <li>Creating exceptional content that provides real value</li>
-      <li>Building long-term relationships with editors and site owners</li>
-    </ul>
-    
-    <h2>Measuring Your Link Building Success</h2>
-    <p>Success in link building isn't just about the number of links you acquire. Key metrics to track include:</p>
-    
-    <ul>
-      <li>Domain Authority of linking sites</li>
-      <li>Relevance of linking pages to your content</li>
-      <li>Organic traffic increases</li>
-      <li>Keyword ranking improvements</li>
-      <li>Referral traffic from backlinks</li>
-    </ul>
-    
-    <h2>Common Mistakes to Avoid</h2>
-    <p>Even with the best intentions, it's easy to make mistakes that can hurt your link building efforts:</p>
-    
-    <ul>
-      <li>Focusing solely on high DA sites without considering relevance</li>
-      <li>Using the same anchor text repeatedly</li>
-      <li>Neglecting to build relationships before asking for links</li>
-      <li>Creating low-quality content for guest posts</li>
-    </ul>
-    
-    <h2>Conclusion</h2>
-    <p>White hat link building in 2025 is about creating genuine value, building real relationships, and earning links through expertise and authority. While it requires more effort than black hat tactics, the long-term benefits far outweigh the initial investment.</p>
-    
-    <p>Remember, successful link building is a marathon, not a sprint. Focus on quality over quantity, and always prioritize the user experience and value creation.</p>
-  `,
-  category: "Link Building",
-  author: "Sarah Johnson",
-  date: "2025-01-15",
-  readTime: "12 min read",
-  image: "/placeholder.svg?height=400&width=800",
-  tags: ["Link Building", "SEO", "White Hat", "Digital Marketing", "Content Strategy"]
+interface BlogPostPageProps {
+  params: {
+    slug: string
+  }
 }
 
-const relatedArticles = [
-  {
-    title: "How to Scale Your Backlink Campaign: A Programmatic Approach",
-    excerpt: "Learn how to automate and scale your link building efforts while maintaining quality.",
-    slug: "scale-backlink-campaign-programmatic",
-    image: "/placeholder.svg?height=200&width=300"
-  },
-  {
-    title: "Guest Posting vs Niche Edits: Which Strategy Works Better?",
-    excerpt: "A comprehensive comparison of guest posting and niche edits for link building.",
-    slug: "guest-posting-vs-niche-edits",
-    image: "/placeholder.svg?height=200&width=300"
-  },
-  {
-    title: "Local SEO Link Building: Dominate Your Geographic Market",
-    excerpt: "Master local link building strategies to dominate your local market.",
-    slug: "local-seo-link-building",
-    image: "/placeholder.svg?height=200&width=300"
+export default function BlogPostPage({ params }: BlogPostPageProps) {
+  const article = allArticles.find(a => a.slug === params.slug)
+  
+  if (!article) {
+    notFound()
   }
-]
 
-export default function ArticlePage() {
+  // Get related articles (same category, excluding current)
+  const relatedArticles = allArticles
+    .filter(a => a.category === article.category && a.id !== article.id)
+    .slice(0, 3)
+
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="bg-white border-b sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
-            <TrendingUp className="h-8 w-8 text-blue-600" />
-            <span className="text-xl font-bold">LocalServiceNearYou</span>
-          </Link>
-          
-          <nav className="hidden md:flex items-center space-x-6">
-            <Link href="/" className="text-gray-600 hover:text-gray-900">Home</Link>
-            <Link href="/blog" className="text-gray-600 hover:text-gray-900">Blog</Link>
-            <Link href="/pricing" className="text-gray-600 hover:text-gray-900">Pricing</Link>
-            <Button>Get Started</Button>
-          </nav>
-
-          <MobileNav>
-            <Link href="/" className="text-lg font-medium">Home</Link>
-            <Link href="/blog" className="text-lg font-medium">Blog</Link>
-            <Link href="/pricing" className="text-lg font-medium">Pricing</Link>
-            <Button asChild className="w-full">
-              <Link href="/contact">Get Started</Link>
-            </Button>
-          </MobileNav>
-        </div>
-      </header>
-
-      {/* Back to Blog */}
-      <div className="container mx-auto px-4 py-4">
-        <Link href="/blog" className="inline-flex items-center text-blue-600 hover:text-blue-800">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Blog
-        </Link>
-      </div>
-
-      {/* Article Header */}
-      <article className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="container py-8 md:py-12">
+      <div className="max-w-4xl mx-auto">
+        {/* Back Button */}
         <div className="mb-8">
-          <Badge className="mb-4">{article.category}</Badge>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
-            {article.title}
-          </h1>
-          <p className="text-xl text-gray-600 mb-6">
-            {article.excerpt}
-          </p>
-          
-          {/* Author and Meta Info */}
-          <div className="flex flex-wrap items-center gap-6 text-gray-500 mb-8">
-            <div className="flex items-center gap-2">
-              <User className="h-5 w-5" />
-              <span className="font-medium">{article.author}</span>
+          <Button variant="ghost" asChild>
+            <Link href="/blog">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Blog
+            </Link>
+          </Button>
+        </div>
+
+        {/* Article Header */}
+        <div className="space-y-6 mb-8">
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <Badge>{article.category}</Badge>
+              {article.type === 'client' && (
+                <Badge variant="outline">Client Story</Badge>
+              )}
+              {article.featured && (
+                <Badge variant="secondary">Featured</Badge>
+              )}
             </div>
-            <div className="flex items-center gap-2">
-              <Calendar className="h-5 w-5" />
-              <span>{new Date(article.date).toLocaleDateString()}</span>
+            <h1 className="text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">
+              {article.title}
+            </h1>
+            <p className="text-xl text-muted-foreground">
+              {article.excerpt}
+            </p>
+          </div>
+
+          {/* Article Meta */}
+          <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center space-x-1">
+              <User className="h-4 w-4" />
+              <span>By {article.author}</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Clock className="h-5 w-5" />
+            <div className="flex items-center space-x-1">
+              <Calendar className="h-4 w-4" />
+              <span>{new Date(article.date).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}</span>
+            </div>
+            <div className="flex items-center space-x-1">
+              <Clock className="h-4 w-4" />
               <span>{article.readTime}</span>
             </div>
+            {article.views && (
+              <div className="flex items-center space-x-1">
+                <Eye className="h-4 w-4" />
+                <span>{article.views} views</span>
+              </div>
+            )}
           </div>
 
-          {/* Social Actions */}
-          <div className="flex items-center gap-4 mb-8">
-            <Button variant="outline" size="sm">
-              <Share2 className="h-4 w-4 mr-2" />
-              Share
-            </Button>
-            <Button variant="outline" size="sm">
-              <BookmarkPlus className="h-4 w-4 mr-2" />
-              Save
-            </Button>
+          {/* Featured Image */}
+          <div className="aspect-video overflow-hidden rounded-lg">
+            <img
+              src={article.image || "/placeholder.svg"}
+              alt={article.title}
+              className="h-full w-full object-cover"
+            />
           </div>
-        </div>
-
-        {/* Featured Image */}
-        <div className="mb-12">
-          <Image
-            src={article.image || "/placeholder.svg"}
-            alt={article.title}
-            width={800}
-            height={400}
-            className="w-full rounded-lg shadow-lg"
-          />
         </div>
 
         {/* Article Content */}
         <div className="prose prose-lg max-w-none mb-12">
-          <div dangerouslySetInnerHTML={{ __html: article.content }} />
-        </div>
+          <div className="space-y-6">
+            <p>
+              In today's competitive digital landscape, local service businesses need more than just a basic website to succeed. They need a comprehensive strategy that combines programmatic SEO, high-quality backlinks, and consistent local citations to dominate their markets.
+            </p>
+            
+            <p>
+              This is exactly what we've helped {article.clientName || 'hundreds of businesses'} achieve through our proven methodology. By leveraging automation and data-driven insights, we create scalable content strategies that drive real results.
+            </p>
 
-        {/* Tags */}
-        <div className="mb-12">
-          <h3 className="text-lg font-semibold mb-4">Tags</h3>
-          <div className="flex flex-wrap gap-2">
-            {article.tags.map((tag) => (
-              <Badge key={tag} variant="secondary" className="cursor-pointer hover:bg-blue-100">
-                {tag}
-              </Badge>
-            ))}
+            <h2>The Challenge</h2>
+            <p>
+              Local service businesses face unique challenges in the digital space. They need to rank for location-specific keywords, build trust with local customers, and compete against both local competitors and national chains. Traditional SEO approaches often fall short because they're too slow and resource-intensive.
+            </p>
+
+            <h2>Our Solution</h2>
+            <p>
+              Our programmatic approach solves these challenges by:
+            </p>
+            <ul>
+              <li>Generating hundreds of location-specific pages automatically</li>
+              <li>Building high-quality backlinks from relevant local and industry websites</li>
+              <li>Creating consistent NAP citations across major directories</li>
+              <li>Optimizing for local search intent and user behavior</li>
+            </ul>
+
+            <h2>Results That Matter</h2>
+            <p>
+              The results speak for themselves. Our clients typically see:
+            </p>
+            <ul>
+              <li>300-500% increase in organic traffic within 6 months</li>
+              <li>First page rankings for 100+ local keywords</li>
+              <li>Significant improvement in local pack visibility</li>
+              <li>Higher quality leads and increased conversion rates</li>
+            </ul>
+
+            {article.type === 'client' && article.clientName && (
+              <>
+                <h2>Case Study: {article.clientName}</h2>
+                <p>
+                  {article.clientName} came to us looking to expand their digital presence and compete more effectively in their local market. Through our programmatic SEO approach, we were able to help them achieve remarkable results in just a few months.
+                </p>
+                <p>
+                  The key to their success was our ability to create highly targeted, location-specific content that resonated with their target audience while building the authority signals that Google values most.
+                </p>
+              </>
+            )}
+
+            <h2>Getting Started</h2>
+            <p>
+              If you're ready to take your local service business to the next level, our team is here to help. We'll work with you to develop a customized strategy that fits your specific needs and goals.
+            </p>
           </div>
         </div>
 
-        <Separator className="mb-12" />
-
-        {/* CTA Section */}
-        <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-8 mb-12 text-center">
-          <h3 className="text-2xl font-bold mb-4">Ready to Build High-Quality Backlinks?</h3>
-          <p className="text-gray-600 mb-6">
-            Let our experts handle your link building campaign while you focus on growing your business.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
-              Start Your Campaign
-            </Button>
-            <Button size="lg" variant="outline">
-              View Our Pricing
-            </Button>
+        {/* Client Backlinks */}
+        {article.backlinks && article.backlinks.length > 0 && (
+          <div className="mb-12 p-6 bg-muted rounded-lg">
+            <h3 className="text-lg font-semibold mb-4">Featured Business</h3>
+            <div className="space-y-2">
+              {article.backlinks.map((link, index) => (
+                <div key={index} className="flex items-center space-x-2">
+                  <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                  <a 
+                    href={link} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline"
+                  >
+                    {article.clientName} - Visit Website
+                  </a>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Related Articles */}
-        <div>
-          <h3 className="text-2xl font-bold mb-6">Related Articles</h3>
-          <div className="grid md:grid-cols-3 gap-6">
-            {relatedArticles.map((relatedArticle, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
-                <div className="relative">
-                  <Image
-                    src={relatedArticle.image || "/placeholder.svg"}
-                    alt={relatedArticle.title}
-                    width={300}
-                    height={200}
-                    className="w-full h-40 object-cover rounded-t-lg"
-                  />
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-lg line-clamp-2 hover:text-blue-600 cursor-pointer">
-                    <Link href={`/blog/${relatedArticle.slug}`}>
-                      {relatedArticle.title}
-                    </Link>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 text-sm line-clamp-3 mb-4">
-                    {relatedArticle.excerpt}
-                  </p>
+        {relatedArticles.length > 0 && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold">Related Articles</h2>
+            <div className="grid gap-6 md:grid-cols-3">
+              {relatedArticles.map((relatedArticle) => (
+                <div key={relatedArticle.id} className="group">
                   <Link href={`/blog/${relatedArticle.slug}`}>
-                    <Button variant="outline" size="sm" className="w-full">
-                      Read More
-                    </Button>
+                    <div className="space-y-3">
+                      <div className="aspect-video overflow-hidden rounded-lg">
+                        <img
+                          src={relatedArticle.image || "/placeholder.svg"}
+                          alt={relatedArticle.title}
+                          className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Badge variant="secondary">{relatedArticle.category}</Badge>
+                        <h3 className="font-semibold line-clamp-2 group-hover:text-blue-600 transition-colors">
+                          {relatedArticle.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground line-clamp-2">
+                          {relatedArticle.excerpt}
+                        </p>
+                      </div>
+                    </div>
                   </Link>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </article>
+        )}
 
-      {/* Newsletter Signup */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Get More SEO Insights</h2>
-          <p className="text-xl text-gray-600 mb-8">
-            Subscribe to our newsletter for weekly link building tips and strategies.
+        {/* CTA Section */}
+        <div className="mt-12 bg-muted rounded-lg p-8 text-center space-y-4">
+          <h2 className="text-2xl font-bold">Ready to Scale Your Business?</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            See how our programmatic SEO and backlink solutions can transform your local service business like they have for hundreds of others.
           </p>
-          <div className="max-w-md mx-auto flex gap-4">
-            <input 
-              type="email"
-              placeholder="Enter your email" 
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <Button className="bg-blue-600 hover:bg-blue-700 whitespace-nowrap">
-              Subscribe
-            </Button>
-          </div>
+          <Button size="lg" asChild>
+            <Link href="/contact">
+              Get Started Today <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
         </div>
-      </section>
+      </div>
     </div>
   )
 }

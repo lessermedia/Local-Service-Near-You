@@ -1,24 +1,15 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import { Header } from '@/components/header'
+import { Footer } from '@/components/footer'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'LocalServiceNearYou - Programmatic SEO & Backlink Solutions',
-  description: 'Scale your local business with programmatic SEO articles and high-quality backlinks. Get instant authority, local citations, and search visibility at scale.',
-  keywords: 'programmatic SEO, backlinks, local SEO, content marketing, local business marketing, SEO services, link building',
-  openGraph: {
-    title: 'LocalServiceNearYou - Programmatic SEO & Backlink Solutions',
-    description: 'Scale your local business with programmatic SEO articles and high-quality backlinks.',
-    type: 'website',
-    url: 'https://localservicenearyou.com',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'LocalServiceNearYou - Programmatic SEO Solutions',
-    description: 'Scale your local business with programmatic SEO articles and high-quality backlinks.',
-  },
+  title: 'LocalServiceHub - Find Trusted Local Service Providers',
+  description: 'Connect with trusted local service providers in your area. Find plumbers, HVAC technicians, electricians, and more.',
+  keywords: 'local services, plumbers, HVAC, electricians, home services, contractors',
     generator: 'v0.dev'
 }
 
@@ -30,7 +21,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        {children}
+        <Header />
+        <main className="min-h-screen">
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   )

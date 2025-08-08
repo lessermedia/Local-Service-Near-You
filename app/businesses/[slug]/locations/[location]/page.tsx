@@ -14,15 +14,16 @@ interface BusinessLocationPageProps {
   }
 }
 
-export default function BusinessLocationPage({ params }: BusinessLocationPageProps) {
-  const business = getBusinessBySlug(params.slug)
+export default async function BusinessLocationPage({ params }: BusinessLocationPageProps) {
+  const { slug, location } = await params
+  const business = getBusinessBySlug(slug)
   
   if (!business) {
     notFound()
   }
 
   // Parse location from URL slug
-  const locationParts = params.location.split('-')
+  const locationParts = location.split('-')
   let city = ''
   let state = ''
   

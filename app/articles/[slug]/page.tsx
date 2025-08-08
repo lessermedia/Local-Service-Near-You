@@ -15,7 +15,7 @@ interface ArticlePageProps {
 }
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
-  const { slug } = await params
+  const { slug } = params
   const article = getArticleBySlug(slug)
   
   if (!article) {

@@ -15,22 +15,23 @@ interface BusinessServiceLocationPageProps {
   }
 }
 
-export default function BusinessServiceLocationPage({ params }: BusinessServiceLocationPageProps) {
-  const business = getBusinessBySlug(params.slug)
+export default async function BusinessServiceLocationPage({ params }: BusinessServiceLocationPageProps) {
+  const { slug, service, location } = await params
+  const business = getBusinessBySlug(slug)
   
   if (!business) {
     notFound()
   }
 
   // Convert service slug back to service name
-  const serviceName = params.service
+  const serviceName = service
     .split('-')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
     .replace(/\b(Seo|Ppc|Crm|Sms|Ai|Cro|Roi)\b/gi, match => match.toUpperCase())
 
   // Parse location from URL slug
-  const locationParts = params.location.split('-')
+  const locationParts = location.split('-')
   let city = ''
   let state = ''
   
@@ -69,14 +70,14 @@ export default function BusinessServiceLocationPage({ params }: BusinessServiceL
           <span>/</span>
           <Link href={`/businesses/${business.slug}`} className="hover:text-gray-700">{business.name}</Link>
           <span>/</span>
-          <Link href={`/businesses/${business.slug}/services/${params.service}`} className="hover:text-gray-700">{matchingService}</Link>
+          <Link href={`/businesses/${business.slug}/services/${service}`} className="hover:text-gray-700">{matchingService}</Link>
           <span>/</span>
           <span>{city}, {state}</span>
         </div>
 
         {/* Back Button */}
         <div className="mb-6">
-          <Link href={`/businesses/${business.slug}/services/${params.service}`}>
+          <Link href={`/businesses/${business.slug}/services/${service}`}>
             <Button variant="ghost" className="pl-0">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to {matchingService} Services
@@ -258,7 +259,7 @@ export default function BusinessServiceLocationPage({ params }: BusinessServiceL
                     return (
                       <Link 
                         key={index} 
-                        href={`/businesses/${business.slug}/services/${params.service}/${locationSlug}`}
+                        href={`/businesses/${business.slug}/services/${service}/${locationSlug}`}
                         className="block p-3 border rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-colors text-center"
                       >
                         <div className="font-medium text-gray-900 text-sm">{matchingService}</div>

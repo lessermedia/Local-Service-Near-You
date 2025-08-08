@@ -14,8 +14,9 @@ interface BusinessPageProps {
   }
 }
 
-export default function BusinessPage({ params }: BusinessPageProps) {
-  const business = getBusinessBySlug(params.slug)
+export default async function BusinessPage({ params }: BusinessPageProps) {
+  const { slug } = await params
+  const business = getBusinessBySlug(slug)
   
   if (!business) {
     notFound()

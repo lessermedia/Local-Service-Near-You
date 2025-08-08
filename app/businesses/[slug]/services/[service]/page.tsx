@@ -14,15 +14,16 @@ interface BusinessServicePageProps {
   }
 }
 
-export default function BusinessServicePage({ params }: BusinessServicePageProps) {
-  const business = getBusinessBySlug(params.slug)
+export default async function BusinessServicePage({ params }: BusinessServicePageProps) {
+  const { slug, service } = await params
+  const business = getBusinessBySlug(slug)
   
   if (!business) {
     notFound()
   }
 
   // Convert service slug back to service name
-  const serviceName = params.service
+  const serviceName = service
     .split('-')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
@@ -201,7 +202,7 @@ export default function BusinessServicePage({ params }: BusinessServicePageProps
                     return (
                       <Link 
                         key={index} 
-                        href={`/businesses/${business.slug}/services/${params.service}/${locationSlug}`}
+                        href={`/businesses/${business.slug}/services/${service}/${locationSlug}`}
                         className="block p-3 border rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-colors text-center"
                       >
                         <div className="font-medium text-gray-900 text-sm">{matchingService}</div>

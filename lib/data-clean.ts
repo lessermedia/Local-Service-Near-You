@@ -236,7 +236,7 @@ ${service} can significantly impact your business growth when implements correct
       publishedAt: articleDate.toISOString(),
       category: service,
       tags: [service.toLowerCase(), 'digital marketing', 'guide', 'strategy', 'roi'],
-      readTime: `${5 + (i % 5)} min read`, // Deterministic read time based on article index
+      readTime: `${Math.floor(Math.random() * 5) + 5} min read`,
       featured: i < 3, // First 3 articles per service are featured
       image: `/placeholder.svg?height=300&width=500&text=${service.replace(/\s+/g, '+')}+Guide`
     })
@@ -278,75 +278,4 @@ export function getRecentArticles(limit: number = 10): Article[] {
   return articles
     .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
     .slice(0, limit)
-}
-
-export function searchBusinesses(query: string, location?: string, industry?: string) {
-  let filteredBusinesses = [...businesses]
-
-  // Filter by search query (name, description, services)
-  if (query) {
-    const searchTerm = query.toLowerCase()
-    filteredBusinesses = filteredBusinesses.filter(business => 
-      business.name.toLowerCase().includes(searchTerm) ||
-      business.description.toLowerCase().includes(searchTerm) ||
-      business.services.some(service => service.toLowerCase().includes(searchTerm))
-    )
-  }
-
-  // Filter by location (service areas)
-  if (location) {
-    const locationTerm = location.toLowerCase()
-    filteredBusinesses = filteredBusinesses.filter(business =>
-      business.serviceAreas.some(area => area.toLowerCase().includes(locationTerm)) ||
-      business.address.city.toLowerCase().includes(locationTerm) ||
-      business.address.state.toLowerCase().includes(locationTerm)
-    )
-  }
-
-  // Filter by industry
-  if (industry && industry !== 'All') {
-    filteredBusinesses = filteredBusinesses.filter(business =>
-      business.industry === industry
-    )
-  }
-
-  return filteredBusinesses
-}
-
-export function getBusinessesByIndustry(industry: string) {
-  if (industry === 'All') {
-    return businesses
-  }
-  return businesses.filter(business => business.industry === industry)
-}
-
-export function getAllIndustries(): string[] {
-  const industries = [...new Set(businesses.map(business => business.industry))]
-  return ['All', ...industries.sort()]
-}
-
-export function getBusinessesByLocation(location: string) {
-  const locationTerm = location.toLowerCase()
-  return businesses.filter(business =>
-    business.serviceAreas.some(area => area.toLowerCase().includes(locationTerm)) ||
-    business.address.city.toLowerCase().includes(locationTerm) ||
-    business.address.state.toLowerCase().includes(locationTerm)
-  )
-}
-
-export function getFeaturedBusinesses(): Business[] {
-  return businesses.filter(business => business.featured)
-}
-
-// Search articles by query
-export function searchArticles(query: string): Article[] {
-  if (!query) return articles
-  
-  const lowerQuery = query.toLowerCase()
-  return articles.filter(article => 
-    article.title.toLowerCase().includes(lowerQuery) ||
-    article.content.toLowerCase().includes(lowerQuery) ||
-    article.category.toLowerCase().includes(lowerQuery) ||
-    article.tags.some(tag => tag.toLowerCase().includes(lowerQuery))
-  )
 }

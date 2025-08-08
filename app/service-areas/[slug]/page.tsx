@@ -13,10 +13,11 @@ interface ServiceAreaPageProps {
   }
 }
 
-export default function ServiceAreaPage({ params }: ServiceAreaPageProps) {
+export default async function ServiceAreaPage({ params }: ServiceAreaPageProps) {
   // Parse city from slug and get proper state from mapping
   // For "new-york-new-york", we need to find the city that matches the first part
-  const slugParts = params.slug.split('-')
+  const { slug } = await params
+  const slugParts = slug.split('-')
   
   // Try different combinations to find the correct city
   let city = ''

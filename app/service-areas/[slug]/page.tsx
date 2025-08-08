@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { ArrowRight, MapPin, Star, Phone, Clock, Award, Building2, TrendingUp, Users, Search } from 'lucide-react'
 import { searchBusinesses, getArticlesByCategory, businesses, articles } from '@/lib/data'
-import { formatPhoneNumber } from '@/lib/utils'
+import { formatPhoneNumber, CITY_TO_STATE_MAP } from '@/lib/utils'
 
 interface ServiceAreaPageProps {
   params: {
@@ -14,10 +14,32 @@ interface ServiceAreaPageProps {
 }
 
 export default function ServiceAreaPage({ params }: ServiceAreaPageProps) {
-  // Extract city and state from slug (e.g., "denver-colorado" -> "Denver", "Colorado")
+  // Parse city from slug and get proper state from mapping
+  // For "new-york-new-york", we need to find the city that matches the first part
   const slugParts = params.slug.split('-')
-  const city = slugParts.slice(0, -1).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ')
-  const state = slugParts[slugParts.length - 1].charAt(0).toUpperCase() + slugParts[slugParts.length - 1].slice(1)
+  
+  // Try different combinations to find the correct city
+  let city = ''
+  let state = ''
+  
+  // Check all possible city combinations from the slug
+  for (let i = 1; i <= slugParts.length; i++) {
+    const testCity = slugParts.slice(0, i)
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ')
+    
+    if (CITY_TO_STATE_MAP[testCity]) {
+      city = testCity
+      state = CITY_TO_STATE_MAP[testCity]
+      break
+    }
+  }
+  
+  // Fallback to old logic if no match found
+  if (!city) {
+    city = slugParts.slice(0, -1).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ')
+    state = slugParts[slugParts.length - 1].charAt(0).toUpperCase() + slugParts[slugParts.length - 1].slice(1)
+  }
   
   // Find businesses serving this area
   const areaBusinesses = searchBusinesses('', city)
@@ -63,7 +85,8 @@ export default function ServiceAreaPage({ params }: ServiceAreaPageProps) {
               Local Services in {city}, {state}
             </h1>
             <p className="text-lg text-gray-600 mb-6 max-w-3xl mx-auto">
-              Find trusted local service providers in {city}. Connect with verified professionals for all your home and business needs.
+              Find trusted local service providers in {city}. Connect with verified professionals for all your home and business needs. 
+              For comprehensive <a href="https://lessermedia.com" target="_blank" rel="nofollow" className="text-blue-600 hover:text-blue-800 underline">digital marketing services</a> to grow your local business, visit Lesser Media.
             </p>
             <div className="flex flex-wrap justify-center gap-2 mb-6">
               {industries.map((industry) => (
@@ -322,6 +345,7 @@ export default function ServiceAreaPage({ params }: ServiceAreaPageProps) {
           <h2 className="text-3xl font-bold mb-4">Need a Service Provider in {city}?</h2>
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
             Get connected with trusted local professionals. Browse our verified service providers or get started with a free consultation.
+            Looking to market your business online? <a href="https://lessermedia.com" target="_blank" rel="nofollow" className="text-white hover:text-blue-200 underline font-semibold">Lesser Media</a> offers expert digital marketing solutions.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" variant="secondary" asChild>

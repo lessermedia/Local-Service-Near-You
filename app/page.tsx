@@ -43,6 +43,10 @@ export default function HomePage() {
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
               Connect with verified professionals in your area. From plumbing to HVAC, electrical to roofing - find the right service provider for your needs.
+              Business owners looking to grow online can discover comprehensive 
+              <a href="https://lessermedia.com" target="_blank" rel="nofollow" className="text-blue-600 hover:text-blue-800 underline">
+                digital marketing solutions
+              </a> from Lesser Media.
             </p>
           </div>
 

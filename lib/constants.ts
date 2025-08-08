@@ -51,7 +51,7 @@ export const BUSINESS_CONFIG = {
   
   // Business Details
   founded: 2024,
-  timezone: "America/Denver",
+  timezone: "America/New_York",
   supportHours: "Monday - Friday, 9 AM - 6 PM EST"
 }
 
@@ -119,6 +119,9 @@ export const subscriptionTiers = {
 }
 
 export const industries = [
+  "Digital Marketing",
+  "Web Development",
+  "Marketing & Advertising",
   "Plumbing",
   "HVAC",
   "Electrical",

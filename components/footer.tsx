@@ -96,6 +96,16 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <a 
+                  href="https://lessermedia.com" 
+                  target="_blank" 
+                  rel="nofollow" 
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  Digital Marketing Services
+                </a>
+              </li>
             </ul>
           </div>
         </div>

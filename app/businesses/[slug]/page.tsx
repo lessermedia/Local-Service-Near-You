@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { MapPin, Phone, Mail, Globe, Star, Clock, CheckCircle, Calendar, Users } from 'lucide-react'
 import { getBusinessBySlug, getArticlesByBusiness } from '@/lib/data'
-import { formatPhoneNumber, formatDate } from '@/lib/utils'
+import { formatPhoneNumber, formatDate, getServiceAreaSlug } from '@/lib/utils'
 
 interface BusinessPageProps {
   params: {
@@ -143,17 +143,26 @@ export default function BusinessPage({ params }: BusinessPageProps) {
             <Card>
               <CardHeader>
                 <CardTitle>Our Services</CardTitle>
-                <CardDescription>Professional services we provide</CardDescription>
+                <CardDescription>Professional services we provide - Click to view detailed service pages</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {business.services.map((service, index) => (
-                    <div key={index} className="flex items-center p-3 bg-gray-50 rounded-lg">
-                      <CheckCircle className="w-5 h-5 text-green-600 mr-3 flex-shrink-0" />
-                      <span className="font-medium">{service}</span>
-                    </div>
-                  ))}
+                  {business.services.map((service, index) => {
+                    const serviceSlug = service.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, '')
+                    
+                    return (
+                      <Link key={index} href={`/businesses/${business.slug}/services/${serviceSlug}`}>
+                        <div className="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-blue-50 hover:border-blue-300 border border-gray-200 transition-colors cursor-pointer">
+                          <CheckCircle className="w-5 h-5 text-green-600 mr-3 flex-shrink-0" />
+                          <span className="font-medium hover:text-blue-700">{service}</span>
+                        </div>
+                      </Link>
+                    )
+                  })}
                 </div>
+                <p className="text-sm text-gray-500 mt-3">
+                  Click on any service to see detailed information and local availability
+                </p>
               </CardContent>
             </Card>
 
@@ -161,29 +170,28 @@ export default function BusinessPage({ params }: BusinessPageProps) {
             <Card>
               <CardHeader>
                 <CardTitle>Service Areas</CardTitle>
-                <CardDescription>Areas we serve - Click to view local services</CardDescription>
+                <CardDescription>Local citation pages for each area we serve</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-wrap gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                   {business.serviceAreas.map((area, index) => {
-                    // Create slug for service area page (city-state format)
-                    const areaSlug = `${area.toLowerCase().replace(/\s+/g, '-')}-${business.headquarters.state.toLowerCase().replace(/\s+/g, '-')}`
+                    // Create location slug using proper city-state mapping
+                    const areaSlug = getServiceAreaSlug(area)
                     
                     return (
-                      <Link key={index} href={`/service-areas/${areaSlug}`}>
-                        <Badge 
-                          variant="outline" 
-                          className="text-sm hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 cursor-pointer transition-colors"
-                        >
-                          <MapPin className="w-3 h-3 mr-1" />
-                          {area}
-                        </Badge>
+                      <Link key={index} href={`/businesses/${business.slug}/locations/${areaSlug}`}>
+                        <div className="p-3 bg-gray-50 rounded-lg hover:bg-blue-50 hover:border-blue-300 border border-gray-200 transition-colors cursor-pointer text-center">
+                          <MapPin className="w-4 h-4 mx-auto mb-2 text-gray-600" />
+                          <div className="font-medium text-xs hover:text-blue-700">{business.name}</div>
+                          <div className="text-xs text-gray-500">in {area}</div>
+                        </div>
                       </Link>
                     )
                   })}
                 </div>
-                <p className="text-sm text-gray-500 mt-3">
-                  Click on any area to see all service providers in that location
+                <p className="text-sm text-gray-500 mt-4">
+                  We serve <strong>{business.serviceAreas.length} locations</strong> across the United States. 
+                  Click on any location to see our local citation page for that area with specific services and contact information.
                 </p>
               </CardContent>
             </Card>

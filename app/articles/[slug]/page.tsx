@@ -26,7 +26,7 @@ export default function ArticlePage({ params }: ArticlePageProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Back Button */}
         <div className="mb-6">
           <Link href="/articles">
@@ -103,6 +103,16 @@ export default function ArticlePage({ params }: ArticlePageProps) {
               <div className="prose prose-lg max-w-none">
                 <div className="whitespace-pre-line text-gray-700 leading-relaxed">
                   {article.content}
+                </div>
+                
+                {/* Strategic backlink */}
+                <div className="mt-8 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                  <p className="text-sm text-gray-700">
+                    <strong>Need help with digital marketing for your business?</strong> 
+                    <a href="https://lessermedia.com" target="_blank" rel="nofollow" className="text-blue-600 hover:text-blue-800 underline ml-1">
+                      Lesser Media
+                    </a> provides comprehensive marketing solutions including SEO, PPC, web development, and marketing automation services nationwide.
+                  </p>
                 </div>
               </div>
             </div>

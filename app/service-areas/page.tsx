@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ArrowRight, Search, MapPin, Star, TrendingUp, Users, Building2 } from 'lucide-react'
 import { businesses } from '@/lib/data'
+import { CITY_TO_STATE_MAP, getServiceAreaSlug } from '@/lib/utils'
 
 interface ServiceAreaData {
   id: string
@@ -34,23 +35,24 @@ export default function ServiceAreasPage() {
   // Add service areas from businesses
   businesses.forEach(business => {
     business.serviceAreas.forEach(area => {
+      const properState = CITY_TO_STATE_MAP[area] || 'Unknown'
       const existingArea = allServiceAreas.find(serviceArea => 
-        serviceArea.city === area && serviceArea.state === business.headquarters.state
+        serviceArea.city === area && serviceArea.state === properState
       )
       
       if (!existingArea) {
         allServiceAreas.push({
-          id: `${area.toLowerCase().replace(/\s+/g, '-')}-${business.headquarters.state.toLowerCase()}`,
-          slug: `${area.toLowerCase().replace(/\s+/g, '-')}-${business.headquarters.state.toLowerCase().replace(/\s+/g, '-')}`,
+          id: `${area.toLowerCase().replace(/\s+/g, '-')}-${properState.toLowerCase()}`,
+          slug: getServiceAreaSlug(area),
           name: area,
           city: area,
-          state: business.headquarters.state,
+          state: properState,
           businesses: [business],
           industries: [business.industry],
           totalBusinesses: 1,
           totalReviews: business.reviewCount,
           averageRating: business.rating,
-          description: `Find trusted local service providers in ${area}, ${business.headquarters.state}. Connect with verified professionals for all your home and business needs.`
+          description: `Find trusted local service providers in ${area}, ${properState}. Connect with verified professionals for all your home and business needs.`
         })
       } else {
         // Add business to existing area

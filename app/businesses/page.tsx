@@ -54,7 +54,10 @@ export default function BusinessesPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">Find Local Service Providers</h1>
           <p className="text-lg text-gray-600">
-            Discover trusted professionals in your area
+            Discover trusted professionals in your area. Looking to grow your business online? 
+            <a href="https://lessermedia.com" target="_blank" rel="nofollow" className="text-blue-600 hover:text-blue-800 underline ml-1">
+              Lesser Media
+            </a> offers expert digital marketing services to help local businesses succeed.
           </p>
         </div>
 

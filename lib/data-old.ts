@@ -140,8 +140,9 @@ export const businesses: Business[] = [
     ],
     featured: true,
     tier: "tier3"
-  }
-]
+  },
+  {
+    id: "denver-plumbing-pros",
     name: "Denver Plumbing Pros",
     slug: "denver-plumbing-pros",
     description: "Professional plumbing services in Denver and surrounding areas. We specialize in emergency repairs, installations, and maintenance for residential and commercial properties.",

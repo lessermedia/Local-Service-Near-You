@@ -8,10 +8,7 @@ import { getBusinessBySlug } from '@/lib/data'
 import { formatPhoneNumber, CITY_TO_STATE_MAP } from '@/lib/utils'
 
 interface BusinessServicePageProps {
-  params: {
-    slug: string
-    service: string
-  }
+  params: Promise<{ slug: string; service: string }>
 }
 
 export default async function BusinessServicePage({ params }: BusinessServicePageProps) {

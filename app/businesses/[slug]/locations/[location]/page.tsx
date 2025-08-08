@@ -9,11 +9,13 @@ import { ArrowLeft, Star, Phone, MapPin, Globe, Mail, CheckCircle, Clock } from 
 import { getBusinessBySlug } from '@/lib/data';
 import { formatPhoneNumber, CITY_TO_STATE_MAP } from '@/lib/utils';
 
-export async function generateMetadata({ params }: { params: { slug: string; location: string } }): Promise<Metadata> {
-  const business = getBusinessBySlug(params.slug);
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string; location: string }> }): Promise<Metadata> {
+  const { slug, location } = await params;
+  const business = getBusinessBySlug(slug);
   if (!business) return {};
 
-  const locationParts = params.location.split('-');
+  const locationParts = location.split('-');
   let city = '';
   let state = '';
   for (let i = 1; i <= locationParts.length; i++) {
@@ -30,7 +32,7 @@ export async function generateMetadata({ params }: { params: { slug: string; loc
 
   const title = `${business.name} in ${city}, ${state} | ${business.industry} Services`;
   const description = `Professional ${business.industry.toLowerCase()} services in ${city}, ${state}. Local expertise, proven results, and trusted by businesses in the ${city} area.`;
-  const url = `https://localservicenear.you/businesses/${business.slug}/locations/${params.location}`;
+  const url = `https://localservicenear.you/businesses/${business.slug}/locations/${location}`;
   const image = '/placeholder-logo.png';
 
   return {
@@ -56,20 +58,18 @@ export async function generateMetadata({ params }: { params: { slug: string; loc
   };
 }
 
+
 interface BusinessLocationPageProps {
-  params: {
-    slug: string;
-    location: string;
-  };
+  params: Promise<{ slug: string; location: string }>;
 }
 
-export default function BusinessLocationPage({ params }: BusinessLocationPageProps) {
-  const business = getBusinessBySlug(params.slug);
+export default async function BusinessLocationPage({ params }: BusinessLocationPageProps) {
+  const { slug, location } = await params;
+  const business = getBusinessBySlug(slug);
   if (!business) {
     notFound();
   }
-
-  const locationParts = params.location.split('-');
+  const locationParts = location.split('-');
   let city = '';
   let state = '';
   for (let i = 1; i <= locationParts.length; i++) {
@@ -85,7 +85,6 @@ export default function BusinessLocationPage({ params }: BusinessLocationPagePro
   if (!business.serviceAreas.includes(city)) {
     notFound();
   }
-
   const logo = '/placeholder-logo.png';
   const locationSchema = {
     '@context': 'https://schema.org',
@@ -117,7 +116,6 @@ export default function BusinessLocationPage({ params }: BusinessLocationPagePro
     areaServed: city,
     description: business.description,
   };
-
   return (
     <>
       <Script id="ld-json-location" type="application/ld+json">

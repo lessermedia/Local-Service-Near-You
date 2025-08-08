@@ -8,23 +8,19 @@ import { ArrowLeft, Clock, User, Calendar, Tag, Share2 } from 'lucide-react'
 import { getArticleBySlug, getBusinessBySlug, getRecentArticles } from '@/lib/data'
 import { formatDate } from '@/lib/utils'
 
+
 interface ArticlePageProps {
-  params: {
-    slug: string
-  }
+  params: Promise<{ slug: string }>
 }
 
-export default function ArticlePage({ params }: ArticlePageProps) {
-  const { slug } = params
-  const article = getArticleBySlug(slug)
-  
+export default async function ArticlePage({ params }: ArticlePageProps) {
+  const { slug } = await params;
+  const article = getArticleBySlug(slug);
   if (!article) {
-    notFound()
+    notFound();
   }
-
-  const author = getBusinessBySlug(article.authorId)
-  const relatedArticles = getRecentArticles(3).filter(a => a.id !== article.id)
-
+  const author = getBusinessBySlug(article.authorId);
+  const relatedArticles = getRecentArticles(3).filter(a => a.id !== article.id);
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

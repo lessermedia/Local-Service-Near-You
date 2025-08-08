@@ -8,35 +8,29 @@ import { MapPin, Phone, Mail, Globe, Star, Clock, CheckCircle, Calendar, Users }
 import { getBusinessBySlug, getArticlesByBusiness } from '@/lib/data'
 import { formatPhoneNumber, formatDate, getServiceAreaSlug } from '@/lib/utils'
 
+
 interface BusinessPageProps {
-  params: {
-    slug: string
-  }
+  params: Promise<{ slug: string }>;
 }
 
 export default async function BusinessPage({ params }: BusinessPageProps) {
-  const { slug } = await params
-  const business = getBusinessBySlug(slug)
-  
+  const { slug } = await params;
+  const business = getBusinessBySlug(slug);
   if (!business) {
-    notFound()
+    notFound();
   }
-
-  const businessArticles = getArticlesByBusiness(business.id)
-
+  const businessArticles = getArticlesByBusiness(business.id);
   const formatBusinessHours = (hours: any) => {
-    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
-    const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    
+    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     return days.map((day, index) => {
-      const dayHours = hours[day]
+      const dayHours = hours[day];
       return {
         day: dayNames[index],
         hours: dayHours.closed ? 'Closed' : `${dayHours.open} - ${dayHours.close}`
-      }
-    })
-  }
-
+      };
+    });
+  };
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -281,5 +275,5 @@ export default async function BusinessPage({ params }: BusinessPageProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

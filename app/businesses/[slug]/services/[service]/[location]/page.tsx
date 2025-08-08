@@ -1,64 +1,53 @@
-import { notFound } from 'next/navigation'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { ArrowLeft, Star, Phone, MapPin, Globe, Mail, CheckCircle, Clock } from 'lucide-react'
-import { getBusinessBySlug } from '@/lib/data'
-import { formatPhoneNumber, CITY_TO_STATE_MAP } from '@/lib/utils'
+
+import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft, Star, Phone, MapPin, Globe, Mail, CheckCircle } from 'lucide-react';
+import { getBusinessBySlug } from '@/lib/data';
+import { formatPhoneNumber, CITY_TO_STATE_MAP } from '@/lib/utils';
 
 interface BusinessServiceLocationPageProps {
-  params: {
-    slug: string
-    service: string
-    location: string
-  }
+  params: Promise<{ slug: string; service: string; location: string }>;
 }
 
 export default async function BusinessServiceLocationPage({ params }: BusinessServiceLocationPageProps) {
-  const { slug, service, location } = await params
-  const business = getBusinessBySlug(slug)
-  
+  const { slug, service, location } = await params;
+  const business = getBusinessBySlug(slug);
   if (!business) {
-    notFound()
+    notFound();
   }
-
   // Convert service slug back to service name
   const serviceName = service
     .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
-    .replace(/\b(Seo|Ppc|Crm|Sms|Ai|Cro|Roi)\b/gi, match => match.toUpperCase())
-
+    .replace(/\b(Seo|Ppc|Crm|Sms|Ai|Cro|Roi)\b/gi, (match: string) => match.toUpperCase());
   // Parse location from URL slug
-  const locationParts = location.split('-')
-  let city = ''
-  let state = ''
-  
+  const locationParts = location.split('-');
+  let city = '';
+  let state = '';
   // Try different combinations to find the correct city
   for (let i = 1; i <= locationParts.length; i++) {
     const testCity = locationParts.slice(0, i)
-      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-      .join(' ')
-    
+      .map((part: string) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
     if (CITY_TO_STATE_MAP[testCity]) {
-      city = testCity
-      state = CITY_TO_STATE_MAP[testCity]
-      break
+      city = testCity;
+      state = CITY_TO_STATE_MAP[testCity];
+      break;
     }
   }
-
   // Find exact service match
-  const matchingService = business.services.find(service => 
+  const matchingService = business.services.find((service: string) => 
     service.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, ' ') === 
     serviceName.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, ' ')
-  )
-
+  );
   // Verify business serves this location and service
   if (!matchingService || !business.serviceAreas.includes(city)) {
-    notFound()
+    notFound();
   }
-
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -74,7 +63,6 @@ export default async function BusinessServiceLocationPage({ params }: BusinessSe
           <span>/</span>
           <span>{city}, {state}</span>
         </div>
-
         {/* Back Button */}
         <div className="mb-6">
           <Link href={`/businesses/${business.slug}/services/${service}`}>
@@ -84,7 +72,6 @@ export default async function BusinessServiceLocationPage({ params }: BusinessSe
             </Button>
           </Link>
         </div>
-
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm p-8 mb-8">
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between">
@@ -146,7 +133,6 @@ export default async function BusinessServiceLocationPage({ params }: BusinessSe
             </div>
           </div>
         </div>
-
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
@@ -197,7 +183,6 @@ export default async function BusinessServiceLocationPage({ params }: BusinessSe
                       </div>
                     </div>
                   </div>
-
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">Our {matchingService} Process</h3>
                   <div className="space-y-4 mb-6">
                     <div className="flex items-start">
@@ -229,7 +214,6 @@ export default async function BusinessServiceLocationPage({ params }: BusinessSe
                       </div>
                     </div>
                   </div>
-
                   <div className="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
                     <p className="text-sm text-gray-700">
                       Ready to get started with {matchingService.toLowerCase()} in {city}, {state}? 
@@ -241,7 +225,6 @@ export default async function BusinessServiceLocationPage({ params }: BusinessSe
                 </div>
               </CardContent>
             </Card>
-
             {/* Service Areas */}
             <Card>
               <CardHeader>
@@ -253,9 +236,8 @@ export default async function BusinessServiceLocationPage({ params }: BusinessSe
               <CardContent>
                 <div className="grid md:grid-cols-3 gap-3">
                   {business.serviceAreas.filter(area => area !== city).slice(0, 9).map((area, index) => {
-                    const areaState = CITY_TO_STATE_MAP[area] || 'Unknown'
-                    const locationSlug = `${area.toLowerCase().replace(/\s+/g, '-')}-${areaState.toLowerCase().replace(/\s+/g, '-')}`
-                    
+                    const areaState = CITY_TO_STATE_MAP[area] || 'Unknown';
+                    const locationSlug = `${area.toLowerCase().replace(/\s+/g, '-')}-${areaState.toLowerCase().replace(/\s+/g, '-')}`;
                     return (
                       <Link 
                         key={index} 
@@ -265,13 +247,12 @@ export default async function BusinessServiceLocationPage({ params }: BusinessSe
                         <div className="font-medium text-gray-900 text-sm">{matchingService}</div>
                         <div className="text-xs text-gray-500">in {area}</div>
                       </Link>
-                    )
+                    );
                   })}
                 </div>
               </CardContent>
             </Card>
           </div>
-
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Business Hours */}
@@ -294,7 +275,6 @@ export default async function BusinessServiceLocationPage({ params }: BusinessSe
                 </CardContent>
               </Card>
             )}
-
             {/* Other Services in This Location */}
             <Card>
               <CardHeader>
@@ -306,9 +286,8 @@ export default async function BusinessServiceLocationPage({ params }: BusinessSe
               <CardContent>
                 <div className="space-y-2">
                   {business.services.filter(service => service !== matchingService).slice(0, 6).map((service, index) => {
-                    const serviceSlug = service.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, '')
-                    const locationSlug = `${city.toLowerCase().replace(/\s+/g, '-')}-${state.toLowerCase().replace(/\s+/g, '-')}`
-                    
+                    const serviceSlug = service.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, '');
+                    const locationSlug = `${city.toLowerCase().replace(/\s+/g, '-')}-${state.toLowerCase().replace(/\s+/g, '-')}`;
                     return (
                       <Link 
                         key={index} 
@@ -317,7 +296,7 @@ export default async function BusinessServiceLocationPage({ params }: BusinessSe
                       >
                         {service} in {city}
                       </Link>
-                    )
+                    );
                   })}
                 </div>
               </CardContent>
@@ -326,5 +305,6 @@ export default async function BusinessServiceLocationPage({ params }: BusinessSe
         </div>
       </div>
     </div>
-  )
+  );
 }
+

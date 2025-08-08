@@ -3,8 +3,9 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ArrowRight, MapPin, Star, ExternalLink, Phone, Mail, Clock, Award, Building2, Shield, TrendingUp } from 'lucide-react'
-import { getServiceAreaBySlug, getArticlesByServiceArea, business } from '@/lib/data'
+import { ArrowRight, MapPin, Star, Phone, Clock, Award, Building2, TrendingUp, Users, Search } from 'lucide-react'
+import { searchBusinesses, getArticlesByCategory, businesses, articles } from '@/lib/data'
+import { formatPhoneNumber } from '@/lib/utils'
 
 interface ServiceAreaPageProps {
   params: {
@@ -13,391 +14,325 @@ interface ServiceAreaPageProps {
 }
 
 export default function ServiceAreaPage({ params }: ServiceAreaPageProps) {
-  const area = getServiceAreaBySlug(params.slug)
+  // Extract city and state from slug (e.g., "denver-colorado" -> "Denver", "Colorado")
+  const slugParts = params.slug.split('-')
+  const city = slugParts.slice(0, -1).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ')
+  const state = slugParts[slugParts.length - 1].charAt(0).toUpperCase() + slugParts[slugParts.length - 1].slice(1)
   
-  if (!area) {
+  // Find businesses serving this area
+  const areaBusinesses = searchBusinesses('', city)
+  
+  // Find relevant articles (articles that mention the city or are general service articles)
+  const relevantArticles = articles.filter(article => 
+    article.title.toLowerCase().includes(city.toLowerCase()) ||
+    article.content.toLowerCase().includes(city.toLowerCase()) ||
+    article.tags.includes(city.toLowerCase()) ||
+    article.category === 'Home Maintenance' ||
+    article.category === 'HVAC' ||
+    article.category === 'Safety'
+  ).slice(0, 6)
+  
+  if (areaBusinesses.length === 0) {
+    // If no businesses found, show a not found page
     notFound()
   }
 
-  const serviceAreaArticles = getArticlesByServiceArea(area.id)
+  // Get unique industries from businesses in this area
+  const industries = [...new Set(areaBusinesses.map(business => business.industry))]
+  
+  // Calculate total reviews and average rating
+  const totalReviews = areaBusinesses.reduce((sum, business) => sum + business.reviewCount, 0)
+  const averageRating = areaBusinesses.reduce((sum, business) => sum + (business.rating * business.reviewCount), 0) / totalReviews
 
   return (
-    <div className="container py-8 md:py-12">
-      <div className="space-y-8">
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Breadcrumbs */}
+        <div className="flex items-center space-x-2 text-sm text-gray-500 mb-6">
+          <Link href="/" className="hover:text-gray-700">Home</Link>
+          <span>/</span>
+          <Link href="/service-areas" className="hover:text-gray-700">Service Areas</Link>
+          <span>/</span>
+          <span>{city}, {state}</span>
+        </div>
+
         {/* Header */}
-        <div className="space-y-4">
-          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-            <Link href="/" className="hover:text-foreground">Home</Link>
-            <span>/</span>
-            <Link href="/service-areas" className="hover:text-foreground">Service Areas</Link>
-            <span>/</span>
-            <span>{area.name}</span>
-          </div>
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
-            <div className="space-y-4">
-              <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
-                {business.industry} in {area.name}, {area.state}
-              </h1>
-              <div className="flex items-center space-x-4">
-                <Badge variant="secondary">{business.industry}</Badge>
-                <div className="flex items-center text-muted-foreground">
-                  <MapPin className="h-4 w-4 mr-1" />
-                  {area.name}, {area.state}
-                </div>
-                <Button variant="outline" size="sm" asChild>
-                  <a href={business.website} target="_blank" rel="noopener noreferrer">
-                    Visit Website <ExternalLink className="ml-2 h-4 w-4" />
-                  </a>
-                </Button>
-              </div>
-              <p className="text-lg text-muted-foreground max-w-3xl">
-                {area.description}
-              </p>
-              <div className="flex items-center space-x-4">
-                <Button size="lg" asChild>
-                  <Link href="/contact">
-                    Get Service Today <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-                <Button size="lg" variant="outline" asChild>
-                  <Link href="/business">
-                    <Building2 className="mr-2 h-4 w-4" />
-                    View Main Office
-                  </Link>
-                </Button>
-                {business.emergencyService && (
-                  <Badge variant="destructive" className="bg-green-600">
-                    <Clock className="mr-1 h-3 w-3" />
-                    24/7 Emergency Service
-                  </Badge>
-                )}
-              </div>
+        <div className="bg-white rounded-lg shadow-sm p-8 mb-8">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              Local Services in {city}, {state}
+            </h1>
+            <p className="text-lg text-gray-600 mb-6 max-w-3xl mx-auto">
+              Find trusted local service providers in {city}. Connect with verified professionals for all your home and business needs.
+            </p>
+            <div className="flex flex-wrap justify-center gap-2 mb-6">
+              {industries.map((industry) => (
+                <Badge key={industry} variant="secondary" className="text-sm">
+                  {industry}
+                </Badge>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid gap-4 md:grid-cols-4">
+        {/* Stats */}
+        <div className="grid md:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Monthly Traffic</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Local Businesses</CardTitle>
+              <Building2 className="h-4 w-4 text-gray-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">{area.monthlyTraffic}</div>
-              <p className="text-xs text-muted-foreground">Local visitors</p>
+              <div className="text-2xl font-bold text-blue-600">{areaBusinesses.length}</div>
+              <p className="text-xs text-gray-600">Verified providers</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Ranking Keywords</CardTitle>
+              <CardTitle className="text-sm font-medium">Industries</CardTitle>
+              <TrendingUp className="h-4 w-4 text-gray-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-purple-600">{area.rankingKeywords}</div>
-              <p className="text-xs text-muted-foreground">Local rankings</p>
+              <div className="text-2xl font-bold text-green-600">{industries.length}</div>
+              <p className="text-xs text-gray-600">Service categories</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Service Radius</CardTitle>
-              <MapPin className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Average Rating</CardTitle>
+              <Star className="h-4 w-4 text-gray-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{area.serviceRadius}</div>
-              <p className="text-xs text-muted-foreground">Coverage area</p>
+              <div className="text-2xl font-bold text-yellow-600">{averageRating.toFixed(1)}</div>
+              <p className="text-xs text-gray-600">Customer satisfaction</p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Customer Rating</CardTitle>
-              <Star className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium">Total Reviews</CardTitle>
+              <Users className="h-4 w-4 text-gray-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-orange-600">{area.rating}</div>
-              <p className="text-xs text-muted-foreground">({area.reviewCount} reviews)</p>
+              <div className="text-2xl font-bold text-purple-600">{totalReviews}</div>
+              <p className="text-xs text-gray-600">Customer reviews</p>
             </CardContent>
           </Card>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-3">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Services */}
-            <Card>
-              <CardHeader>
-                <CardTitle>{business.industry} Services in {area.name}</CardTitle>
-                <CardDescription>
-                  Professional services offered by {business.name} in the {area.name} area
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-2 md:grid-cols-2">
-                  {business.specialties.map((specialty) => (
-                    <div key={specialty} className="flex items-center space-x-2">
-                      <div className="h-2 w-2 bg-blue-600 rounded-full" />
-                      <span>{specialty}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Main Content - Businesses */}
+          <div className="lg:col-span-2">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                Service Providers in {city}, {state}
+              </h2>
+              <p className="text-gray-600">
+                {areaBusinesses.length} verified businesses serving the {city} area
+              </p>
+            </div>
 
-            {/* Local Keywords */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Local Search Terms</CardTitle>
-                <CardDescription>
-                  Common searches for {business.industry.toLowerCase()} services in {area.name}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {area.localKeywords.map((keyword) => (
-                    <Badge key={keyword} variant="outline">
-                      {keyword}
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Service Area Articles */}
-            {serviceAreaArticles.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Local Content for {area.name}</CardTitle>
-                  <CardDescription>
-                    Articles and resources specific to {area.name} customers
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {serviceAreaArticles.map((article) => (
-                    <div key={article.id} className="border rounded-lg p-4">
-                      <div className="flex items-start justify-between">
-                        <div className="space-y-2">
-                          <h3 className="font-semibold line-clamp-2">{article.title}</h3>
-                          <p className="text-sm text-muted-foreground line-clamp-2">
-                            {article.excerpt}
-                          </p>
-                          <div className="flex items-center space-x-4 text-xs text-muted-foreground">
-                            <span>{new Date(article.publishedAt).toLocaleDateString()}</span>
-                            <span>{article.readTime}</span>
-                            {article.views && <span>{article.views} views</span>}
-                          </div>
-                        </div>
-                        <Button variant="outline" size="sm" asChild>
-                          <Link href={`/blog/${article.slug}`}>Read</Link>
-                        </Button>
+            {/* Business Listings */}
+            <div className="space-y-6">
+              {areaBusinesses.map((business) => (
+                <Card key={business.id} className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <CardTitle className="text-xl hover:text-blue-600 transition-colors">
+                          <Link href={`/businesses/${business.slug}`}>
+                            {business.name}
+                          </Link>
+                        </CardTitle>
+                        <CardDescription className="flex items-center mt-1">
+                          <MapPin className="w-4 h-4 mr-1" />
+                          {business.address.city}, {business.address.state}
+                        </CardDescription>
                       </div>
+                      <Badge variant="secondary">{business.industry}</Badge>
                     </div>
-                  ))}
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Area Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle>About {area.name}, {area.state}</CardTitle>
-                <CardDescription>
-                  Local area information and service details
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {area.population && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Population:</span>
-                    <span className="font-medium">{area.population.toLocaleString()}</span>
-                  </div>
-                )}
-                {area.county && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">County:</span>
-                    <span className="font-medium">{area.county}</span>
-                  </div>
-                )}
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Service Radius:</span>
-                  <span className="font-medium">{area.serviceRadius}</span>
-                </div>
-                {area.zipCodes && (
-                  <div>
-                    <span className="text-muted-foreground">Zip Codes Served:</span>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {area.zipCodes.map((zip) => (
-                        <Badge key={zip} variant="outline" className="text-xs">
-                          {zip}
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600 mb-4 line-clamp-2">
+                      {business.description}
+                    </p>
+                    
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center">
+                        <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                        <span className="text-sm font-medium ml-1">{business.rating}</span>
+                        <span className="text-sm text-gray-500 ml-1">({business.reviewCount} reviews)</span>
+                      </div>
+                      {business.emergencyService && (
+                        <Badge variant="destructive" className="text-xs">24/7 Emergency</Badge>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center text-sm text-gray-600 mb-4">
+                      <Phone className="w-4 h-4 mr-2" />
+                      {formatPhoneNumber(business.contact.phone)}
+                    </div>
+                    
+                    {/* Services */}
+                    <div className="flex flex-wrap gap-1 mb-4">
+                      {business.services.slice(0, 4).map((service, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {service}
                         </Badge>
                       ))}
+                      {business.services.length > 4 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{business.services.length - 4} more
+                        </Badge>
+                      )}
                     </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Headquarters Info */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Building2 className="h-5 w-5" />
-                  <span>Main Office Location</span>
-                </CardTitle>
-                <CardDescription>
-                  Primary business location for {business.name}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-start space-x-3">
-                    <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
-                    <div>
-                      <p className="font-medium">{business.hq.address}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {business.hq.city}, {business.hq.state} {business.hq.zipCode}
-                      </p>
+                    
+                    <div className="flex space-x-3">
+                      <Link href={`/businesses/${business.slug}`} className="flex-1">
+                        <Button className="w-full">View Details</Button>
+                      </Link>
+                      <Button variant="outline" asChild>
+                        <a href={`tel:${business.contact.phone}`}>Call Now</a>
+                      </Button>
                     </div>
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    Serving {area.name} and surrounding areas within a {area.serviceRadius} radius
-                  </div>
-                  <Button variant="outline" asChild>
-                    <Link href="/business">
-                      View Complete Business Profile <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Contact Info */}
+            {/* Quick Actions */}
             <Card>
               <CardHeader>
-                <CardTitle>Contact Information</CardTitle>
+                <CardTitle>Need Service Now?</CardTitle>
+                <CardDescription>
+                  Get connected with local professionals
+                </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <div>
-                    <p className="font-medium">{business.hq.phone}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {business.emergencyService ? "24/7 Emergency Service" : "Call during business hours"}
-                    </p>
-                  </div>
-                </div>
-                {area.localEmail && (
-                  <div className="flex items-center space-x-3">
-                    <Mail className="h-4 w-4 text-muted-foreground" />
-                    <span>{area.localEmail}</span>
-                  </div>
-                )}
-                <div className="flex items-start space-x-3">
-                  <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
-                  <div>
-                    <div className="font-medium">Service Area: {area.name}, {area.state}</div>
-                    <div className="text-sm text-muted-foreground">
-                      Headquarters: {business.hq.city}, {business.hq.state}
-                    </div>
-                  </div>
-                </div>
+              <CardContent className="space-y-3">
+                <Button className="w-full" asChild>
+                  <Link href="/businesses">
+                    <Search className="w-4 h-4 mr-2" />
+                    Browse All Services
+                  </Link>
+                </Button>
+                <Button variant="outline" className="w-full" asChild>
+                  <Link href="/list-your-business">
+                    List Your Business
+                  </Link>
+                </Button>
               </CardContent>
             </Card>
 
-            {/* Business Hours */}
+            {/* Popular Services */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Clock className="h-4 w-4" />
-                  <span>Service Hours</span>
-                </CardTitle>
+                <CardTitle>Popular Services in {city}</CardTitle>
+                <CardDescription>
+                  Most searched services in your area
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
-                  {Object.entries(business.hq.hours).map(([day, hours]) => (
-                    <div key={day} className="flex justify-between text-sm">
-                      <span className="font-medium">{day}</span>
-                      <span className="text-muted-foreground">{hours}</span>
-                    </div>
-                  ))}
+                <div className="space-y-3">
+                  {industries.map((industry) => {
+                    const industryBusinesses = areaBusinesses.filter(b => b.industry === industry)
+                    return (
+                      <div key={industry} className="flex justify-between items-center">
+                        <span className="text-sm font-medium">{industry}</span>
+                        <Badge variant="outline" className="text-xs">
+                          {industryBusinesses.length} {industryBusinesses.length === 1 ? 'provider' : 'providers'}
+                        </Badge>
+                      </div>
+                    )
+                  })}
                 </div>
-                {business.emergencyService && (
-                  <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
-                    <div className="flex items-center space-x-2 text-green-800">
-                      <Shield className="h-4 w-4" />
-                      <span className="font-medium">24/7 Emergency Service Available</span>
-                    </div>
-                  </div>
-                )}
               </CardContent>
             </Card>
 
-            {/* Rating */}
+            {/* Area Information */}
             <Card>
               <CardHeader>
-                <CardTitle>Customer Rating</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <div className="flex items-center">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`h-5 w-5 ${
-                          i < Math.floor(area.rating) 
-                            ? 'text-yellow-400 fill-current' 
-                            : 'text-gray-300'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-xl font-bold">{area.rating}</span>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Based on {area.reviewCount} customer reviews in {area.name}
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Certifications */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Award className="h-4 w-4" />
-                  <span>Certifications & Licenses</span>
-                </CardTitle>
+                <CardTitle>About {city}, {state}</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
-                  {business.certifications.map((cert) => (
-                    <div key={cert} className="flex items-center space-x-2">
-                      <div className="h-2 w-2 bg-green-600 rounded-full" />
-                      <span className="text-sm">{cert}</span>
-                    </div>
-                  ))}
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Service Providers:</span>
+                    <span className="font-medium">{areaBusinesses.length}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Industries Covered:</span>
+                    <span className="font-medium">{industries.length}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Average Rating:</span>
+                    <span className="font-medium">{averageRating.toFixed(1)} ⭐</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           </div>
         </div>
 
+        {/* Local Articles Section */}
+        {relevantArticles.length > 0 && (
+          <div className="mt-12">
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-3xl font-bold text-gray-900">
+                Local Tips & Guides for {city}
+              </h2>
+              <Link href="/articles">
+                <Button variant="outline">View All Articles</Button>
+              </Link>
+            </div>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {relevantArticles.map((article) => (
+                <Card key={article.id} className="hover:shadow-lg transition-shadow">
+                  <div className="aspect-video bg-gray-200 rounded-t-lg overflow-hidden">
+                    <img 
+                      src={article.image || "/placeholder.svg"} 
+                      alt={article.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <CardHeader>
+                    <Badge variant="outline" className="w-fit">{article.category}</Badge>
+                    <CardTitle className="text-lg leading-tight line-clamp-2">{article.title}</CardTitle>
+                    <CardDescription className="line-clamp-2">{article.excerpt}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                      <span>By {article.author}</span>
+                      <span>{article.readTime}</span>
+                    </div>
+                    <Link href={`/articles/${article.slug}`} className="block">
+                      <Button variant="outline" className="w-full">Read More</Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* CTA Section */}
-        <div className="bg-muted rounded-lg p-8 text-center space-y-4">
-          <h2 className="text-2xl font-bold">Need {business.industry} in {area.name}?</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Contact {business.name} for professional {business.industry.toLowerCase()} services in the {area.name} area.
+        <div className="mt-12 bg-blue-600 rounded-lg p-8 text-center text-white">
+          <h2 className="text-3xl font-bold mb-4">Need a Service Provider in {city}?</h2>
+          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+            Get connected with trusted local professionals. Browse our verified service providers or get started with a free consultation.
           </p>
-          <div className="flex justify-center space-x-4">
-            <Button size="lg" asChild>
-              <Link href="/contact">
-                Get Service Today <ArrowRight className="ml-2 h-4 w-4" />
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button size="lg" variant="secondary" asChild>
+              <Link href="/businesses">
+                Browse All Services <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
-            <Button size="lg" variant="outline" asChild>
-              <a href={`tel:${business.hq.phone}`}>
-                Call Now: {business.hq.phone}
-              </a>
+            <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-blue-600" asChild>
+              <Link href="/list-your-business">
+                List Your Business
+              </Link>
             </Button>
           </div>
         </div>

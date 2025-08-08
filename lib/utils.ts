@@ -28,7 +28,7 @@ export function isValidEmail(email: string): boolean {
 }
 
 export function isValidPhone(phone: string): boolean {
-  const phoneRegex = /^$$?([0-9]{3})$$?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/
+  const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/
   return phoneRegex.test(phone)
 }
 
@@ -90,7 +90,7 @@ export function debounce<T extends (...args: any[]) => any>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout
+  let timeout: ReturnType<typeof setTimeout>
   return (...args: Parameters<T>) => {
     clearTimeout(timeout)
     timeout = setTimeout(() => func(...args), wait)
@@ -106,7 +106,7 @@ export function generateSEOTitle(title: string, businessName?: string): string {
 
 export function generateBreadcrumbs(pathname: string) {
   const paths = pathname.split('/').filter(Boolean)
-  const breadcrumbs = [{ name: 'Home', href: '/' }]
+  const breadcrumbs: Array<{ name: string; href: string; isLast?: boolean }> = [{ name: 'Home', href: '/' }]
   
   let currentPath = ''
   paths.forEach((path, index) => {

@@ -161,17 +161,30 @@ export default function BusinessPage({ params }: BusinessPageProps) {
             <Card>
               <CardHeader>
                 <CardTitle>Service Areas</CardTitle>
-                <CardDescription>Areas we serve</CardDescription>
+                <CardDescription>Areas we serve - Click to view local services</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
-                  {business.serviceAreas.map((area, index) => (
-                    <Badge key={index} variant="outline" className="text-sm">
-                      <MapPin className="w-3 h-3 mr-1" />
-                      {area}
-                    </Badge>
-                  ))}
+                  {business.serviceAreas.map((area, index) => {
+                    // Create slug for service area page (city-state format)
+                    const areaSlug = `${area.toLowerCase().replace(/\s+/g, '-')}-${business.headquarters.state.toLowerCase().replace(/\s+/g, '-')}`
+                    
+                    return (
+                      <Link key={index} href={`/service-areas/${areaSlug}`}>
+                        <Badge 
+                          variant="outline" 
+                          className="text-sm hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 cursor-pointer transition-colors"
+                        >
+                          <MapPin className="w-3 h-3 mr-1" />
+                          {area}
+                        </Badge>
+                      </Link>
+                    )
+                  })}
                 </div>
+                <p className="text-sm text-gray-500 mt-3">
+                  Click on any area to see all service providers in that location
+                </p>
               </CardContent>
             </Card>
 

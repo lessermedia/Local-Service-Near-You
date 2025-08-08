@@ -1,0 +1,7 @@
+{
+  "/businesses/page": "app/businesses/page.js",
+  "/contact/page": "app/contact/page.js",
+  "/local-guides/page": "app/local-guides/page.js",
+  "/articles/page": "app/articles/page.js",
+  "/list-your-business/page": "app/list-your-business/page.js"
+}

@@ -98,7 +98,7 @@ export default function ListYourBusinessPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">List Your Business</h1>
@@ -136,6 +136,162 @@ export default function ListYourBusinessPage() {
             </div>
             <h3 className="font-semibold mb-2">Grow Your Business</h3>
             <p className="text-sm text-gray-600">Increase visibility and grow your customer base online</p>
+          </div>
+        </div>
+
+        {/* Pricing Plans */}
+        <div className="mb-12">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Pay for Local Authority at Scale</h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              We're not slowly building links — we're deploying entire local SEO environments. You get citations, backlinks, and articles indexed across our internal authority network, all pointing to you, instantly.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Base Plan */}
+            <Card className="relative border-2 border-gray-200">
+              <CardHeader className="text-center pb-2">
+                <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                  <Building className="w-6 h-6 text-gray-600" />
+                </div>
+                <CardTitle className="text-xl">Base</CardTitle>
+                <div className="mt-2">
+                  <span className="text-3xl font-bold">$149</span>
+                  <span className="text-gray-600"> one-time</span>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-center text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
+                    <span>1 citation per location + service area</span>
+                  </div>
+                  <div className="flex items-center text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
+                    <span>Permanent listings on our network</span>
+                  </div>
+                  <div className="flex items-center text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
+                    <span>NAP, service keywords, internal schema</span>
+                  </div>
+                </div>
+                <div className="pt-4">
+                  <p className="text-xs text-gray-500">Perfect for establishing your local presence</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Tier 2 Plan */}
+            <Card className="relative border-2 border-blue-300 shadow-lg">
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">Popular</span>
+              </div>
+              <CardHeader className="text-center pb-2">
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                  <TrendingUp className="w-6 h-6 text-blue-600" />
+                </div>
+                <CardTitle className="text-xl">Tier 2</CardTitle>
+                <div className="mt-2">
+                  <span className="text-3xl font-bold">$299</span>
+                  <span className="text-gray-600">/month</span>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-center text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
+                    <span>Includes everything from Base</span>
+                  </div>
+                  <div className="flex items-center text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
+                    <span>10 backlinks per service</span>
+                  </div>
+                  <div className="flex items-center text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
+                    <span>Links to homepage & citations</span>
+                  </div>
+                  <div className="flex items-center text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
+                    <span>Monthly content refresh</span>
+                  </div>
+                  <div className="flex items-center text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
+                    <span>Schema & location-targeted content</span>
+                  </div>
+                </div>
+                <div className="pt-4">
+                  <p className="text-xs text-gray-500">Fast-start SEO boost with indexed links</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Tier 3 Plan */}
+            <Card className="relative border-2 border-purple-300">
+              <CardHeader className="text-center pb-2">
+                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                  <Award className="w-6 h-6 text-purple-600" />
+                </div>
+                <CardTitle className="text-xl">Tier 3</CardTitle>
+                <div className="mt-2">
+                  <span className="text-3xl font-bold">$999</span>
+                  <span className="text-gray-600">/month</span>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-center text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
+                    <span>Includes everything from Base</span>
+                  </div>
+                  <div className="flex items-center text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
+                    <span>100 backlinks per service</span>
+                  </div>
+                  <div className="flex items-center text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
+                    <span>100 articles per service</span>
+                  </div>
+                  <div className="flex items-center text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
+                    <span>Authority injection & schema bloat</span>
+                  </div>
+                  <div className="flex items-center text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
+                    <span>Long-tail keyword domination</span>
+                  </div>
+                </div>
+                <div className="pt-4">
+                  <p className="text-xs text-gray-500">For aggressive dominance & national scale</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Additional Information */}
+          <div className="mt-8 grid md:grid-cols-2 gap-8">
+            <Card className="bg-blue-50 border-blue-200">
+              <CardHeader>
+                <CardTitle className="text-lg text-blue-900">Instant Authority. Ongoing Freshness.</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-blue-800">
+                  We deploy complete local SEO environments with 100+ articles, citations, and backlinks 
+                  indexed across our internal authority network, all pointing to you, instantly.
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-amber-50 border-amber-200">
+              <CardHeader>
+                <CardTitle className="text-lg text-amber-900">Cancellation Policy</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <p className="text-sm text-amber-800">• Links & articles go offline within 7 days of cancellation</p>
+                <p className="text-sm text-amber-800">• Option to pause ($99/mo) to preserve listings without fresh content</p>
+                <p className="text-sm text-amber-800">• Rejoining triggers a full reindex cycle with new content</p>
+              </CardContent>
+            </Card>
           </div>
         </div>
 

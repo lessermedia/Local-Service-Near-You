@@ -386,3 +386,84 @@ export function getBusinessCitations(businessId: string): Citation[] {
     description: `${business.name} provides ${business.services.join(', ')} in ${area}, ${business.headquarters.state}.`
   }))
 }
+
+// Additional missing exports for build compatibility
+export function getFeaturedArticle(): Article | undefined {
+  return articles.find(article => article.featured)
+}
+
+export const allArticles = articles
+
+export const categories = [...new Set(articles.map(article => article.category))]
+
+export const contentTypes = categories
+
+export const clients = businesses.map(business => ({
+  ...business,
+  location: `${business.headquarters.city}, ${business.headquarters.state}`,
+  specialties: business.services,
+  articlesCount: articles.filter(article => article.authorId === business.id).length,
+  monthlyTraffic: "15K+", // Mock data
+  rankingKeywords: "127", // Mock data
+  website: business.contact.website,
+  reviews: business.reviewCount
+}))
+
+export const industries = [...new Set(businesses.map(business => business.industry))]
+
+export const business = {
+  id: "denver-plumbing-pros",
+  name: "Denver Plumbing Pros",
+  slug: "denver-plumbing-pros",
+  description: "Professional plumbing services in Denver and surrounding areas. We specialize in emergency repairs, installations, and maintenance for residential and commercial properties.",
+  industry: "Plumbing",
+  specialties: [
+    "Emergency Plumbing",
+    "Drain Cleaning",
+    "Water Heater Installation",
+    "Pipe Repair",
+    "Bathroom Remodeling",
+    "Kitchen Plumbing",
+    "Sewer Line Repair",
+    "Leak Detection"
+  ],
+  yearEstablished: 2015,
+  employeeCount: "6-15",
+  rating: 4.8,
+  reviewCount: 127,
+  emergencyService: true,
+  serviceRadius: "50 miles",
+  articlesCount: 25,
+  website: "https://denverplumbingpros.com",
+  heroImage: "/placeholder.svg?height=400&width=600&text=Denver+Plumbing+Pros+Storefront",
+  certifications: ["Licensed", "Insured", "BBB Accredited"],
+  hq: {
+    phone: "(303) 555-0123",
+    email: "info@denverplumbingpros.com",
+    address: "1234 Main St",
+    city: "Denver",
+    state: "Colorado",
+    zipCode: "80202",
+    hours: {
+      "Monday": "7:00 AM - 7:00 PM",
+      "Tuesday": "7:00 AM - 7:00 PM", 
+      "Wednesday": "7:00 AM - 7:00 PM",
+      "Thursday": "7:00 AM - 7:00 PM",
+      "Friday": "7:00 AM - 7:00 PM",
+      "Saturday": "8:00 AM - 5:00 PM",
+      "Sunday": "9:00 AM - 3:00 PM"
+    }
+  }
+} // Default business for business page
+
+export function getClientBySlug(slug: string): Business | undefined {
+  return businesses.find(business => business.slug === slug)
+}
+
+export function getArticlesByClient(clientId: string): Article[] {
+  return articles.filter(article => article.authorId === clientId)
+}
+
+export function getServiceAreaCitationsByClient(clientId: string): Citation[] {
+  return getBusinessCitations(clientId)
+}

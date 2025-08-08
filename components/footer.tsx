@@ -16,7 +16,8 @@ export function Footer() {
       { name: 'About Us', href: '/about' },
       { name: 'Contact', href: '/contact' },
       { name: 'Privacy Policy', href: '/privacy' },
-      { name: 'Terms of Service', href: '/terms' }
+      { name: 'Terms of Service', href: '/terms' },
+      { name: 'Sitemap', href: '/sitemap.xml' }
     ],
     industries: [
       { name: 'Plumbing', href: '/businesses?industry=Plumbing' },

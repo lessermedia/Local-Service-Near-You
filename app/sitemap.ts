@@ -64,42 +64,27 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ]
 
     // Add service pages for each business
-    const servicePages = business.services.map(service => {
-      const serviceSlug = service.toLowerCase()
-        .replace(/&/g, 'and')  // Replace & with 'and'
-        .replace(/\s+/g, '-')  // Replace spaces with hyphens
-        .replace(/[^a-z0-9-]/g, '')  // Remove all non-alphanumeric except hyphens
-      
-      return {
-        url: `${baseUrl}/businesses/${business.slug}/services/${serviceSlug}`,
-        lastModified: new Date(),
-        changeFrequency: 'weekly' as const,
-        priority: 0.7,
-      }
-    })
+    const servicePages = business.services.map(service => ({
+      url: `${baseUrl}/businesses/${business.slug}/services/${service.toLowerCase().replace(/\s+/g, '-')}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    }))
 
     // Add service + location pages (limit to first 50 to avoid too many URLs)
     const serviceLocationPages = business.services.slice(0, 5).flatMap(service => 
-      business.serviceAreas.slice(0, 10)
-        .map(area => {
-          const serviceSlug = service.toLowerCase()
-            .replace(/&/g, 'and')  // Replace & with 'and'
-            .replace(/\s+/g, '-')  // Replace spaces with hyphens
-            .replace(/[^a-z0-9-]/g, '')  // Remove all non-alphanumeric except hyphens
-            
-          const stateAbbr = getStateAbbreviation(area)
-          if (!stateAbbr) return null // Skip if no state found
-          
-          const locationSlug = `${area.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}-${stateAbbr}`
-          
-          return {
-            url: `${baseUrl}/businesses/${business.slug}/services/${serviceSlug}/${locationSlug}`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly' as const,
-            priority: 0.6,
-          }
-        })
-        .filter((item): item is NonNullable<typeof item> => item !== null) // Type-safe filter
+      business.serviceAreas.slice(0, 10).map(area => {
+        const serviceSlug = service.toLowerCase().replace(/\s+/g, '-')
+        const stateAbbr = getStateAbbreviation(area) || 'unknown'
+        const locationSlug = `${area.toLowerCase().replace(/\s+/g, '-')}-${stateAbbr}`
+        
+        return {
+          url: `${baseUrl}/businesses/${business.slug}/services/${serviceSlug}/${locationSlug}`,
+          lastModified: new Date(),
+          changeFrequency: 'weekly' as const,
+          priority: 0.6,
+        }
+      })
     )
 
     return [...businessPages, ...servicePages, ...serviceLocationPages]
@@ -114,21 +99,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }))
 
   // Service area pages
-  const serviceAreaPages: MetadataRoute.Sitemap = locations.slice(0, 100)
-    .map(location => {
-      if (!location.city || !location.state) return null // Skip invalid locations
-      
-      const citySlug = location.city.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
-      const stateSlug = location.state.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
-      
-      return {
-        url: `${baseUrl}/service-areas/${citySlug}-${stateSlug}`,
-        lastModified: new Date(),
-        changeFrequency: 'weekly' as const,
-        priority: 0.6,
-      }
-    })
-    .filter((item): item is NonNullable<typeof item> => item !== null)
+  const serviceAreaPages: MetadataRoute.Sitemap = locations.slice(0, 100).map(location => ({
+    url: `${baseUrl}/service-areas/${location.city.toLowerCase().replace(/\s+/g, '-')}-${location.state.toLowerCase().replace(/\s+/g, '-')}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.6,
+  }))
 
   return [
     ...staticPages,
@@ -140,10 +116,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
 // Helper function to get state abbreviation
 function getStateAbbreviation(city: string): string | undefined {
-  if (!city) return undefined
-  
   const stateAbbr = CITY_TO_STATE_MAP[city]
-  if (!stateAbbr) return undefined
-  
-  return stateAbbr.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+  return stateAbbr?.toLowerCase().replace(/\s+/g, '-')
 }

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { MobileNav } from './mobile-nav'
 import { Menu, Phone, MapPin } from 'lucide-react'
+import { BUSINESS_CONFIG } from '@/lib/constants'
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -27,7 +28,7 @@ export function Header() {
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-2">
                 <MapPin className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900">Local Service Near You</span>
+              <span className="text-xl font-bold text-gray-900">{BUSINESS_CONFIG.companyName}</span>
             </Link>
           </div>
 

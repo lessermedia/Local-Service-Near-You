@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Label } from '@/components/ui/label'
 import { MapPin, Phone, Mail, Clock, MessageSquare, HelpCircle, Building } from 'lucide-react'
 import { isValidEmail } from '@/lib/utils'
+import { BUSINESS_CONFIG, getFormattedBusinessHours } from '@/lib/business-config'
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -96,8 +97,8 @@ export default function ContactPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-2xl font-semibold text-gray-900 mb-2">(555) 123-4567</p>
-                <p className="text-gray-600 mb-4">Monday - Friday, 9 AM - 6 PM EST</p>
+                <p className="text-2xl font-semibold text-gray-900 mb-2">{BUSINESS_CONFIG.contact.phone}</p>
+                <p className="text-gray-600 mb-4">{BUSINESS_CONFIG.supportHours}</p>
                 <p className="text-sm text-gray-500">
                   Call us for immediate assistance with your account or technical issues.
                 </p>
@@ -112,7 +113,7 @@ export default function ContactPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-lg font-semibold text-gray-900 mb-2">support@localservicehub.com</p>
+                <p className="text-lg font-semibold text-gray-900 mb-2">{BUSINESS_CONFIG.contact.supportEmail}</p>
                 <p className="text-gray-600 mb-4">Response within 24 hours</p>
                 <p className="text-sm text-gray-500">
                   Send us detailed questions or feedback via email.
@@ -128,9 +129,9 @@ export default function ContactPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="font-semibold text-gray-900 mb-1">LocalServiceHub</p>
-                <p className="text-gray-600 mb-1">123 Business Ave, Suite 100</p>
-                <p className="text-gray-600 mb-4">Denver, CO 80202</p>
+                <p className="font-semibold text-gray-900 mb-1">{BUSINESS_CONFIG.companyName}</p>
+                <p className="text-gray-600 mb-1">{BUSINESS_CONFIG.address.street}</p>
+                <p className="text-gray-600 mb-4">{BUSINESS_CONFIG.address.city}, {BUSINESS_CONFIG.address.state} {BUSINESS_CONFIG.address.zipCode}</p>
                 <p className="text-sm text-gray-500">
                   Visit us by appointment only.
                 </p>
@@ -146,18 +147,12 @@ export default function ContactPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span>Monday - Friday</span>
-                    <span>9:00 AM - 6:00 PM</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Saturday</span>
-                    <span>10:00 AM - 4:00 PM</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Sunday</span>
-                    <span>Closed</span>
-                  </div>
+                  {getFormattedBusinessHours().map(({ day, hours }) => (
+                    <div key={day} className="flex justify-between">
+                      <span>{day}</span>
+                      <span>{hours}</span>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>

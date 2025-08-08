@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { BUSINESS_CONFIG } from './constants'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -101,7 +102,7 @@ export function generateSEOTitle(title: string, businessName?: string): string {
   if (businessName) {
     return `${title} | ${businessName}`
   }
-  return `${title} | Local Service Near You`
+  return `${title} | ${BUSINESS_CONFIG.companyName}`
 }
 
 export function generateBreadcrumbs(pathname: string) {

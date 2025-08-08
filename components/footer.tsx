@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { MapPin, Phone, Mail, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react'
+import { BUSINESS_CONFIG } from '@/lib/constants'
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
@@ -35,16 +36,24 @@ export function Footer() {
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-2">
                 <MapPin className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold">LocalServiceHub</span>
+              <span className="text-xl font-bold">{BUSINESS_CONFIG.brandName}</span>
             </div>
             <p className="text-gray-400 mb-4">
-              Connecting customers with trusted local service providers across the United States.
+              {BUSINESS_CONFIG.description}
             </p>
             <div className="flex space-x-4">
-              <Facebook className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer" />
-              <Twitter className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer" />
-              <Instagram className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer" />
-              <Linkedin className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer" />
+              <Link href={BUSINESS_CONFIG.social.facebook} target="_blank" rel="noopener noreferrer">
+                <Facebook className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer" />
+              </Link>
+              <Link href={BUSINESS_CONFIG.social.twitter} target="_blank" rel="noopener noreferrer">
+                <Twitter className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer" />
+              </Link>
+              <Link href={BUSINESS_CONFIG.social.instagram} target="_blank" rel="noopener noreferrer">
+                <Instagram className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer" />
+              </Link>
+              <Link href={BUSINESS_CONFIG.social.linkedin} target="_blank" rel="noopener noreferrer">
+                <Linkedin className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer" />
+              </Link>
             </div>
           </div>
 
@@ -94,16 +103,16 @@ export function Footer() {
         <div className="border-t border-gray-800 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
-              © {currentYear} LocalServiceHub. All rights reserved.
+              © {currentYear} {BUSINESS_CONFIG.brandName}. All rights reserved.
             </p>
             <div className="flex items-center space-x-6 mt-4 md:mt-0">
               <div className="flex items-center text-gray-400 text-sm">
                 <Phone className="w-4 h-4 mr-1" />
-                (555) 123-4567
+                {BUSINESS_CONFIG.contact.phone}
               </div>
               <div className="flex items-center text-gray-400 text-sm">
                 <Mail className="w-4 h-4 mr-1" />
-                info@localservicehub.com
+                {BUSINESS_CONFIG.contact.email}
               </div>
             </div>
           </div>

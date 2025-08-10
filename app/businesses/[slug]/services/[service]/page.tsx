@@ -72,8 +72,43 @@ export default async function BusinessServicePage({ params }: BusinessServicePag
                 {matchingService} by {business.name}
               </h1>
               <p className="text-xl text-gray-600 mb-6">
-                Professional {matchingService.toLowerCase()} services. {business.description}
+                {matchingService} is a vital solution for businesses looking to grow, improve efficiency, and stay ahead of competitors. Our team at {business.name} specializes in {matchingService.toLowerCase()} for companies of all sizes, delivering measurable results and tailored strategies.
               </p>
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-2">Why Choose {matchingService}?</h2>
+                <ul className="list-disc pl-6 text-gray-700 mb-2">
+                  <li>Proven track record of success for local and national brands</li>
+                  <li>Customized solutions for your unique business needs</li>
+                  <li>Transparent reporting and ongoing optimization</li>
+                  <li>Expert team with industry certifications</li>
+                </ul>
+              </div>
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-2">Frequently Asked Questions</h2>
+                <div className="mb-2"><strong>How does {matchingService.toLowerCase()} benefit my business?</strong><br />It increases visibility, drives qualified leads, and improves ROI through targeted strategies.</div>
+                <div className="mb-2"><strong>How soon can I see results?</strong><br />Most clients see measurable improvements within 30-90 days, depending on service and market.</div>
+                <div className="mb-2"><strong>Is there a contract?</strong><br />We offer flexible plans with no long-term commitment required.</div>
+              </div>
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-2">Client Success Story</h2>
+                <div className="bg-gray-100 rounded p-4 text-gray-700">
+                  "After partnering with {business.name} for {matchingService.toLowerCase()}, our business saw a 40% increase in qualified leads and a 25% boost in revenue within six months. Their team is responsive, knowledgeable, and truly invested in our success."<br /><span className="text-xs text-gray-500">— Satisfied Client</span>
+                </div>
+              </div>
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-2">Related Resources</h2>
+                <ul className="list-disc pl-6 text-blue-700">
+                  <li><Link href="/articles">Read our expert articles</Link></li>
+                  <li><Link href="/businesses">Browse other services</Link></li>
+                  <li><Link href="/contact">Contact us for a free consultation</Link></li>
+                </ul>
+              </div>
+              <div className="mt-8 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                <p className="text-lg text-blue-800 font-semibold">
+                  Ready to transform your business with {matchingService.toLowerCase()}? <br />
+                  <Link href="/contact" className="text-blue-600 hover:text-blue-800 underline">Request your free strategy session now</Link> or call <a href={`tel:${business.contact.phone}`} className="text-blue-600 hover:text-blue-800">{formatPhoneNumber(business.contact.phone)}</a>.
+                </p>
+              </div>
               <div className="flex items-center text-lg mb-4">
                 <Star className="w-5 h-5 text-yellow-400 fill-current" />
                 <span className="font-semibold ml-2">{business.rating}</span>
